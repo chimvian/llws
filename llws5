@@ -1,0 +1,263 @@
+#!/bin/bash
+#!/bin/bash
+#!/bin/bash
+#!/bin/bash
+key=vian.top
+
+clear
+echo -e "\033[1;32m=========================================================================\033[0m"
+echo -e "\033[1;31m                        一键破解流量卫士v5.1\033[0m"
+echo ""
+echo -e "\033[1;33m                        \033[0m"
+echo ""
+echo -e "\033[1;34m                       \033[0m"
+echo ""
+echo -e "\033[1;32m==========================================================================\033[0m"
+echo -n -e "请输入授权码 [\033[32m vian.top \033[0m] ："
+    read PASSWD
+    readkey=$PASSWD
+    if [[ ${readkey%%\ *} == $key ]]
+    then
+        echo 
+		echo -e '验证成功！'
+		sleep 2
+    else
+        echo
+		echo -e '验证失败 ，请重新尝试!'
+		sleep 2
+		exit
+fi
+clear #清空屏幕
+
+
+echo -e "---------------------------------------------------"
+echo -e "欢迎使用叮咚流量卫士5.1一键云端安装脚本"
+echo -e "---------------------------------------------------"
+echo -e "[安装细则]"
+echo -e "脚本为自动安装，如果使用本脚本无法成功安装，您可以使用传统的WEB安装方式"
+echo -e "安装时系统会覆盖原有的app_api文件夹，请务必【自行备份重要】文件"
+echo -e "系统不会导入数据库 安装后请访问云端进行云端安装"
+echo -e "本脚本人畜无害 绿色无毒"
+echo -e "请输入回车后确认执行"
+echo -e "                     by vian"
+read -n1
+clear 
+echo "
+---------------------------------------------------------
+请选择您要进入的安装模式，输入相应的序号后回车
+---------------------------------------------------------
+
+---------------------------------------------------------
+【1】全部安装（一键下载安装云端 启动流量统计 并制作APP）
+【2】安装云端（仅仅安装云端）
+【3】启动流量统计 （尝试修复流量不统计）
+【4】下载APP请手动制作APP （仅仅下载APP）
+---------------------------------------------------------
+---------------------------------------------------------
+（温馨提示：写错可用Ctrl+退格 删除）    
+---------------------------------------------------------
+"
+
+MirrorHost="https://git.oschina.net/chimvian/llws/raw/master"
+ServerLocation=llws5.1
+jb="llws5"
+
+read install_type
+
+if [ $install_type == 1 ];then
+	echo -e "\033[32m -------------------------------- \033[0m"
+	echo -e "\033[32m             全部安装          \033[0m"
+	echo -e "\033[32m -------------------------------- \033[0m"
+	#exit 0
+elif [ $install_type == 2 ];then 
+	echo -e "\033[32m -------------------------------- \033[0m"
+	echo -e "\033[32m             安装云端          \033[0m"
+	echo -e "\033[32m -------------------------------- \033[0m"
+	
+elif [ $install_type == 3 ];then 
+	echo -e "\033[32m -------------------------------- \033[0m"
+	echo -e "\033[32m             启动流量统计          \033[0m"
+	echo -e "\033[32m -------------------------------- \033[0m"
+else
+	install_type=4 
+	echo -e "\033[32m -------------------------------- \033[0m"
+	echo -e "\033[32m             下载APP         \033[0m"
+	echo -e "\033[32m -------------------------------- \033[0m"
+	
+fi
+
+#获取用户输入的appke
+echo -e "[请输入您的授权域名 不要加端口和http://]"
+read domain
+
+echo -e "[请输入您的web流控端口]"
+read port
+
+echo -e "[请输入您的APP授权码（破解回车）]"
+read app_key
+
+#curl "http://www.dingd.cn/api/check.php?domain=$domain&key=$app_key&t=dingd.cn" >> tmp.txt
+
+#read status < tmp.txt
+
+#rm tmp.txt
+
+if [ "success" = "$status" ]; then
+echo -e "已经通过服务器验证"
+#else
+#clear 
+#echo -e ""
+#echo -e " ERROR：未能通过服务器验证 您疑似为盗版用户"
+#echo -e ""
+#exit 0
+fi
+echo -e "==========自动检测WEB目录========="
+
+file1="/home/wwwroot/default/"
+file2="/home/www/default/"
+file3="/var/www/html/"
+file4="/data/www/default/"
+
+if test -f ${file1}index.php;then
+	web_path=$file1
+elif test -f ${file2}index.php;then
+	web_path=$file2
+elif test -f ${file3}index.php;then
+	web_path=$file3
+elif test -f ${file4}index.php;then
+	web_path=$file4
+else 
+	echo -e "系统未能检测到您的WEB目录 请手动输入："
+	read web_path
+		if test -d $web_path;then
+			echo -e "已经确认WEB目录"
+		else
+			echo -e "抱歉！未能检测到该目录！请确认后重新执行本程序！"
+		exit 0;
+		fi
+	fi
+echo -e "您的流控目录为：$web_path"
+chmod -R 0777 $web_path
+	
+	#如果选择的是全新安装或者升级安装 执行此部分
+	if [ $install_type == 1 ] || [ $install_type == 2 ] ;then 
+
+		echo -e "===========开始云端安装==========="
+
+		cd $web_path
+
+		if test -f app_api.zip
+		then
+		#删除旧的安装包
+		rm app_api.zip
+			echo -e "删除旧的安装包\n";
+		else
+			echo -e "未找到旧的安装包\n"
+		fi
+		rm -rf ${web_path}app_api
+		echo -e "下载安装包..."
+		wget --no-check-certificate ${MirrorHost}/${ServerLocation}/app_api.zip >/dev/null 2>&1
+		unzip -o app_api.zip >/dev/null 2>&1
+		
+		rm app_api.zip
+
+		chmod -R 0777 ${web_path}app_api
+
+		echo -e "校验文件完整性"
+
+		if test -f  ${web_path}app_api/system.php;then
+			echo -e "\033[32m  system.php------------文件存在 \033[0m"
+		else
+			echo -e "\033[31m system.php------------文件丢失 \033[0m" 
+		fi
+		if test -f  ${web_path}app_api/config.php;then
+			echo -e "\033[32m  config.php------------文件存在 \033[0m"
+		else
+			echo -e "\033[31m config.php------------文件丢失（第一次全新安装文件丢失属于正常现象） \033[0m" 
+		fi
+		if test -f  ${web_path}app_api/sms.config.php;then
+			echo -e "\033[32m  sms.config.php------------文件存在 \033[0m"
+		else
+			echo -e "\033[31m sms.config.php------------文件丢失 \033[0m" 
+		fi
+
+		echo -e "文件校验完成 如果提示文件丢失 请手动上传"
+
+		#curl "http://$domain:$port/app_api/install/index.php?n=3"
+		
+	fi	
+	if [ $install_type == 1 ] || [ $install_type == 3 ];then
+			
+			if test -f ${web_path}app_api/install.lock;then
+				rm -rf ${web_path}app_api/install.lock
+				
+			fi
+			if test -f ${web_path}app_api/config.php;then
+			rm -rf ${web_path}app_api/config.php
+			fi
+			echo -e "安装流量监控..."
+			wget -O disconnect.sh https://git.oschina.net/chimvian/llws/raw/master/disconnect.sh >/dev/null 2>&1
+			
+			sed -i 's/192.168.1.1:8888/'${domain}:${port}'/g' "disconnect.sh" >/dev/null 2>&1
+			
+			if test -f /etc/openvpn/disconnect.sh;then
+					chmod 0777 -R /etc/openvpn/
+			
+					cp -rf /etc/openvpn/disconnect.sh /etc/openvpn/disconnect.sh.bak 
+					cp -rf disconnect.sh /etc/openvpn/disconnect.sh
+					chmod 0777 /etc/openvpn/disconnect.sh
+			fi
+			
+			if test -f /etc/openvpn/disconnectudp.sh;then
+					chmod 0777 -R /etc/openvpn/
+					cp -rf /etc/openvpn/disconnectudp.sh /etc/openvpn/disconnectudp.sh.bak 
+					cp -rf disconnect.sh /etc/openvpn/disconnectudp.sh
+					chmod 0777 /etc/openvpn/disconnectudp.sh
+			fi
+			if test -f /usr/share/xml/disconnect.sh;then
+					chmod 0777 -R /usr/share/xml/
+					
+					cp -rf /usr/share/xml/disconnect.sh /usr/share/xml/disconnect.sh.bak 
+					cp -rf disconnect.sh /usr/share/xml/disconnect.sh
+					chmod 0777 /usr/share/xml/disconnect.sh
+			fi
+			
+			if test -f /usr/share/xml/disconnectudp.sh;then
+					chmod 0777 -R /usr/share/xml/
+					
+					cp -rf /usr/share/xml/disconnectudp.sh /usr/share/xml/disconnectudp.sh.bak 
+					cp -rf disconnect.sh /usr/share/xml/disconnectudp.sh
+					chmod 0777 /usr/share/xml/disconnectudp.sh
+			fi
+			
+		fi	
+	if [ $install_type == 1 ] || [ $install_type == 4 ];then
+		chmod 0777 -R /home
+		cd /home
+		fi
+			echo -e "下载APK安装包"
+			wget -O android.apk ${MirrorHost}/llws.apk >/dev/null 2>&1
+			cp -rf /home/android.apk  ${web_path}/app_api/llws.apk	
+				rm -rf /home/android.apk	
+	        	
+	            echo "
+---------------------------------------------------------
+             流量卫士V 5.1新世纪安装完成
+---------------------------------------------------------
+             全新安装请运行云端安装向导
+请您重新访问 http://$domain:$port/app_api/install
+---------------------------------------------------------
+后台管理系统：http://${domain}:${port}/app_api
+
+APP下载地址： http://${domain}:${port}/app_api/llws.apk
+
+【注意】请手动对接【注意】请手动对接【注意】请手动对接
+---------------------------------------------------------
+---------------------------------------------------------
+【注意】全新安装完成后请重启一次VPN 否则流量统计可能无效
+【注意】全新安装完成后请重启一次VPN 否则流量统计可能无效
+【注意】全新安装完成后请重启一次VPN 否则流量统计可能无效
+---------------------------------------------------------
+"
+rm -rf /root/${jb}
+exit 0
